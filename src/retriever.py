@@ -44,12 +44,12 @@ try:
         name=COLLECTION_NAME
     )
 
-except Exception as exc:
+except Exception:
 
-    raise RuntimeError(
-        f"Could not open Chroma collection: {COLLECTION_NAME}. "
-        "First run: python src\\build_index.py"
-    ) from exc
+    # Index not found (e.g. on Streamlit Cloud): build it automatically
+    from src.build_index import load_documents, build_vector_database
+
+    collection = build_vector_database(load_documents())
 
 
 # ==========================================
