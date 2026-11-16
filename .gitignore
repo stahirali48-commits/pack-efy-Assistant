@@ -1,0 +1,23 @@
+# Secrets
+.env
+.streamlit/secrets.toml
+
+# Python environments and caches
+.venv/
+.venv-*/
+__pycache__/
+*.py[cod]
+
+# Generated vector databases and experiment indexes
+chroma_db/
+chroma_db_*/
+
+# Local run outputs
+.streamlit/
+*.log
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.backup
+*.bak
