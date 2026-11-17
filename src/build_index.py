@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 KNOWLEDGE_DIR = BASE_DIR / "knowledge"
 DB_DIR = Path(os.getenv("PACKEFY_DB_DIR", str(BASE_DIR / "chroma_db"))).resolve()
 
-COLLECTION_NAME = "packefy_knowledge"
+COLLECTION_NAME = "packefy_knowledge_v2"
 
 CHUNK_SIZE = int(os.getenv("PACKEFY_CHUNK_SIZE", "180"))
 CHUNK_OVERLAP = int(os.getenv("PACKEFY_CHUNK_OVERLAP", "35"))
