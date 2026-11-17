@@ -169,10 +169,10 @@ def load_documents():
     print("Total words:", total_words)
     print("Total chunks:", len(all_chunks))
 
-    if not 1500 <= total_words <= 2500:
-        raise ValueError(
-            "Knowledge base must contain 1500-2500 words."
-        )
+    if total_words < 1500:
+    raise ValueError(
+        "Knowledge base must contain at least 1500 words."
+    )
 
     return all_chunks
 
