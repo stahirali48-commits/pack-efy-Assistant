@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import os
 import re
@@ -7,10 +6,6 @@ import chromadb
 from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
 
 
-# ==========================================
-# PROJECT CONFIGURATION
-# ==========================================
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 KNOWLEDGE_DIR = BASE_DIR / "knowledge"
@@ -18,15 +13,9 @@ DB_DIR = Path(os.getenv("PACKEFY_DB_DIR", str(BASE_DIR / "chroma_db"))).resolve(
 
 COLLECTION_NAME = "packefy_knowledge"
 
-# Defaults used by the submitted project. Environment overrides let the
-# retrieval experiment compare chunk settings in a separate Chroma folder.
 CHUNK_SIZE = int(os.getenv("PACKEFY_CHUNK_SIZE", "180"))
 CHUNK_OVERLAP = int(os.getenv("PACKEFY_CHUNK_OVERLAP", "35"))
 
-
-# ==========================================
-# EXTRACT DOCUMENT METADATA
-# ==========================================
 
 def extract_metadata(text, file_path):
 
@@ -63,10 +52,6 @@ def extract_metadata(text, file_path):
     return metadata
 
 
-# ==========================================
-# SPLIT DOCUMENT INTO CHUNKS
-# ==========================================
-
 def split_into_chunks(
     text,
     chunk_size=CHUNK_SIZE,
@@ -99,10 +84,6 @@ def split_into_chunks(
 
     return chunks
 
-
-# ==========================================
-# LOAD KNOWLEDGE DOCUMENTS
-# ==========================================
 
 def load_documents():
 
@@ -170,16 +151,12 @@ def load_documents():
     print("Total chunks:", len(all_chunks))
 
     if total_words < 1500:
-    raise ValueError(
-        "Knowledge base must contain at least 1500 words."
-    )
+        raise ValueError(
+            "Knowledge base must contain at least 1500 words."
+        )
 
     return all_chunks
 
-
-# ==========================================
-# CREATE CHROMA DATABASE
-# ==========================================
 
 def build_vector_database(chunks):
 
@@ -191,7 +168,6 @@ def build_vector_database(chunks):
         path=str(DB_DIR)
     )
 
-    # Rebuild collection to avoid stale chunks
     existing_collections = [
         collection.name
         for collection in client.list_collections()
@@ -205,7 +181,6 @@ def build_vector_database(chunks):
 
         print("Previous collection removed.")
 
-    # Local embedding function
     embedding_function = DefaultEmbeddingFunction()
 
     collection = client.create_collection(
@@ -221,31 +196,18 @@ def build_vector_database(chunks):
 
     )
 
-    ids = [
-        item["id"]
-        for item in chunks
-    ]
+    ids = [item["id"] for item in chunks]
+    documents = [item["text"] for item in chunks]
+    metadatas = [item["metadata"] for item in chunks]
 
-    documents = [
-        item["text"]
-        for item in chunks
-    ]
-
-    metadatas = [
-        item["metadata"]
-        for item in chunks
-    ]
-
-    # Chroma generates embeddings automatically
-    collection.add(
-
-        ids=ids,
-
-        documents=documents,
-
-        metadatas=metadatas
-
-    )
+    # Add in batches so a large catalogue does not hit Chroma batch limits
+    BATCH = 500
+    for start in range(0, len(ids), BATCH):
+        collection.add(
+            ids=ids[start:start + BATCH],
+            documents=documents[start:start + BATCH],
+            metadatas=metadatas[start:start + BATCH],
+        )
 
     print("\nEmbeddings generated successfully!")
 
@@ -257,10 +219,6 @@ def build_vector_database(chunks):
 
     return collection
 
-
-# ==========================================
-# TEST DOCUMENT RETRIEVAL
-# ==========================================
 
 def test_retrieval(collection):
 
@@ -302,10 +260,6 @@ def test_retrieval(collection):
 
         print("Content:", document[:350])
 
-
-# ==========================================
-# MAIN
-# ==========================================
 
 if __name__ == "__main__":
 
