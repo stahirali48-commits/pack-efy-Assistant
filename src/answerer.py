@@ -169,7 +169,7 @@ BRAND AND LANGUAGE
 
 PRODUCTS
 - For a general product-list question, show product names only unless the user asks for prices or other details.
-- When sample prices are requested, provide only prices stated in products_services.md.
+- When prices are requested, provide only prices stated in products_services.md or company_products.md.
 - Clearly label catalogue prices as fictional educational sample prices, not guaranteed selling prices.
 - For a specific product question, include only details supported for that exact product.
 - Never mix details from different products or assume measurement units.
